@@ -2,8 +2,8 @@ import { API } from "./axios";
 
 
 
-export const createExpense=async()=>{
-    const res=await API.post("/expenseRegister")
+export const createExpense=async(expenseData)=>{
+    const res=await API.post("/expenseRegister",expenseData)
     return res.data;
 }
 
