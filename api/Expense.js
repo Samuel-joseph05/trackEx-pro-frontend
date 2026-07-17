@@ -17,6 +17,6 @@ export const UpdateExpense=async(id,expenseData)=>{
 }
 
 export const deleteExpense=async(id)=>{
-    const res=await API.delete(id)
+    const res=await API.delete(`/expense/${id}`)
     return res.data;
 }
