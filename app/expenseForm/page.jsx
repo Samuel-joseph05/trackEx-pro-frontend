@@ -17,6 +17,7 @@ export default function ExpenseForm() {
     date: "",
   });
 
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -57,54 +58,41 @@ export default function ExpenseForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validate()) return;
 
     console.log(form);
-    
-try{
-    const data=await  createExpense(form);
-    console.log(data)
-    alert("Expense added")
-    setForm({
-      title: "",
-      amount: "",
-      category: "",
-      date: "",
-    });
-}
-catch (error) {
+
+    try {
+      const data = await createExpense(form);
+      console.log(data);
+      alert("Expense added");
+      setForm({
+        title: "",
+        amount: "",
+        category: "",
+        date: "",
+      });
+    } catch (error) {
       console.error(error);
       console.log(error.response?.data);
     }
-
-
   };
 
   return (
     <main className="min-h-screen bg-linear-to-br from-blue-100 via-white to-indigo-100 flex items-center justify-center p-5">
-
       <Card className="w-full max-w-lg rounded-3xl shadow-xl">
-
         <CardHeader>
-          <CardTitle className="text-3xl text-center">
-            Add Expense
-          </CardTitle>
+          <CardTitle className="text-3xl text-center">Add Expense</CardTitle>
         </CardHeader>
 
         <CardContent>
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
 
             <div>
-
               <Label>Title</Label>
 
               <Input
@@ -114,20 +102,15 @@ catch (error) {
                 onChange={handleChange}
               />
 
-              <p className="text-red-500 text-sm mt-1">
-                {errors.title}
-              </p>
-
+              <p className="text-red-500 text-sm mt-1">{errors.title}</p>
             </div>
 
             {/* Amount */}
 
             <div>
-
               <Label>Amount</Label>
 
               <div className="relative">
-
                 <IndianRupee
                   size={18}
                   className="absolute left-3 top-3 text-gray-500"
@@ -141,19 +124,14 @@ catch (error) {
                   onChange={handleChange}
                   className="pl-9"
                 />
-
               </div>
 
-              <p className="text-red-500 text-sm mt-1">
-                {errors.amount}
-              </p>
-
+              <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
             </div>
 
             {/* Category */}
 
             <div>
-
               <Label>Category</Label>
 
               <select
@@ -172,16 +150,12 @@ catch (error) {
                 <option value="Other">📦 Other</option>
               </select>
 
-              <p className="text-red-500 text-sm mt-1">
-                {errors.category}
-              </p>
-
+              <p className="text-red-500 text-sm mt-1">{errors.category}</p>
             </div>
 
             {/* Date */}
 
             <div>
-
               <Label>Date</Label>
 
               <Input
@@ -191,25 +165,16 @@ catch (error) {
                 onChange={handleChange}
               />
 
-              <p className="text-red-500 text-sm mt-1">
-                {errors.date}
-              </p>
-
+              <p className="text-red-500 text-sm mt-1">{errors.date}</p>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-11 rounded-xl"
-            >
+            <Button type="submit" className="w-full h-11 rounded-xl">
               Add Expense
             </Button>
-
+            
           </form>
-
         </CardContent>
-
       </Card>
-
     </main>
   );
 }
