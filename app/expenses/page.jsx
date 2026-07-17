@@ -6,6 +6,13 @@ import { Calendar, IndianRupee, Tag } from "lucide-react";
 import { getExpenses, deleteExpense, UpdateExpense } from "@/api/Expense";
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -103,21 +110,28 @@ const Page = () => {
 
                   <Label>Category</Label>
 
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="w-full border rounded-md px-3 py-2 bg-white"
+                  <Select
+                    value={form.category}
+                    onValueChange={(value) =>
+                      setForm({ ...form, category: value })
+                    }
                   >
-                    <option value="">Select Category</option>
-                    <option value="Food">🍔 Food</option>
-                    <option value="Transport">🚗 Transport</option>
-                    <option value="Shopping">🛍 Shopping</option>
-                    <option value="Entertainment">🎬 Entertainment</option>
-                    <option value="Bills">💡 Bills</option>
-                    <option value="Health">🏥 Health</option>
-                    <option value="Other">📦 Other</option>
-                  </select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="Food">🍔 Food</SelectItem>
+                      <SelectItem value="Transport">🚗 Transport</SelectItem>
+                      <SelectItem value="Shopping">🛍 Shopping</SelectItem>
+                      <SelectItem value="Bills">💡 Bills</SelectItem>
+                      <SelectItem value="Health">🏥 Health</SelectItem>
+                      <SelectItem value="Entertainment">
+                        🎬 Entertainment
+                      </SelectItem>
+                      <SelectItem value="Other">📦 Other</SelectItem>
+                    </SelectContent>
+                  </Select>
 
                   <input
                     type="date"
