@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, IndianRupee, Tag } from "lucide-react";
 import { getExpenses, deleteExpense, UpdateExpense } from "@/api/Expense";
 import { useEffect, useState } from "react";
-import { Label } from "@/components/ui/label";
+
 import {
   Select,
   SelectContent,
@@ -13,6 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 
 const Page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -23,7 +27,7 @@ const Page = () => {
     category: "",
     date: "",
   });
-
+const router = useRouter();
   //
   const handleChange = (e) => {
     setFormData({
@@ -44,9 +48,11 @@ const Page = () => {
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
-      alert("Expense deleted successfully");
+      // alert("Expense deleted successfully");
+      toast.success("Expense deleted successfully");
       await fetchExpenses();
     } catch (err) {
+      toast.error("Failed to delete expense");
       console.log("Failed to delete expense", err);
     }
   };
@@ -65,7 +71,8 @@ const Page = () => {
   const handleUpdate = async () => {
     try {
       await UpdateExpense(editingField, formData);
-      alert("Expense Updated Successfull");
+      // alert("Expense Updated Successfully");
+      toast.success("Expense Updated Successfully");
       setEditingField(null);
 
       fetchExpenses();
@@ -74,139 +81,225 @@ const Page = () => {
     }
   };
 
+
+
   useEffect(() => {
     console.log("Fetching expenses");
     fetchExpenses();
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Expenses</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-6">
+  <div className="max-w-7xl mx-auto">
 
-      {expenses.length === 0 ? (
-        <div className="text-center text-gray-500 mt-10">
-          No expenses found.
-        </div>
-      ) : (
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {expenses.map((expense) =>
-            editingField === expense._id ? (
-              <Card key={expense._id}>
-                <CardContent className="space-y-4 p-5">
-                  <input
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full"
-                  />
-
-                  <input
-                    type="number"
-                    name="amount"
-                    value={formData.amount}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full"
-                  />
-
-                  <Label>Category</Label>
-
-                  <Select
-                    value={form.category}
-                    onValueChange={(value) =>
-                      setForm({ ...form, category: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Category" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      <SelectItem value="Food">🍔 Food</SelectItem>
-                      <SelectItem value="Transport">🚗 Transport</SelectItem>
-                      <SelectItem value="Shopping">🛍 Shopping</SelectItem>
-                      <SelectItem value="Bills">💡 Bills</SelectItem>
-                      <SelectItem value="Health">🏥 Health</SelectItem>
-                      <SelectItem value="Entertainment">
-                        🎬 Entertainment
-                      </SelectItem>
-                      <SelectItem value="Other">📦 Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <input
-                    type="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full"
-                  />
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleUpdate}
-                      className="bg-green-600 text-white px-4 py-2 rounded"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingField(null)}
-                      className="bg-gray-500 text-white px-4 py-2 rounded"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card
-                key={expense._id}
-                className="hover:shadow-xl transition-all duration-300 rounded-2xl"
-              >
-                <CardContent className="p-5 space-y-4">
-                  {/* Title */}
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">{expense.title}</h2>
-
-                    <Badge variant="secondary">{expense.category}</Badge>
-                  </div>
-
-                  {/* Amount */}
-                  <div className="flex items-center gap-2 text-green-600 font-bold text-2xl">
-                    <IndianRupee size={20} />
-                    {expense.amount}
-                  </div>
-
-                  {/* Category */}
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Tag size={16} />
-                    <span>{expense.category}</span>
-                  </div>
-
-                  {/* Date */}
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <Calendar size={16} />
-                    <span>{new Date(expense.date).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex items-center gap-4 mt-4">
-                    <button
-                      onClick={() => handleDelete(expense._id)}
-                      className="rounded-lg bg-red-600 px-5 py-2.5 text-white font-medium shadow-md transition-all duration-200 hover:bg-red-700 hover:shadow-lg active:scale-95"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handleEdit(expense)}
-                      className="rounded-lg bg-blue-600 px-5 py-2.5 text-white"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ),
-          )}
-        </div>
-      )}
+    {/* Heading */}
+    <div className="mb-10 flex items-center justify-between">
+      <div>
+        <h1 className="text-5xl font-bold text-white">
+          Expense Dashboard
+        </h1>
+        <p className="text-slate-400 mt-2">
+          Manage your daily expenses efficiently.
+        </p>
+      </div>
+      <div>
+      <button
+  onClick={() => router.push("/expenseForm")}
+  className="w-full sm:w-auto rounded-xl bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
+>
+  Add Expense
+</button>
+      </div>
     </div>
+
+    {expenses.length === 0 ? (
+      <div className="rounded-3xl border border-slate-700 bg-slate-900/60 backdrop-blur-xl p-16 text-center">
+        <h2 className="text-2xl font-semibold text-white">
+          No Expenses Found
+        </h2>
+        <p className="mt-2 text-slate-400">
+          Add your first expense to start tracking.
+        </p>
+      </div>
+    ) : (
+      <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+        {expenses.map((expense) =>
+          editingField === expense._id ? (
+            <Card
+              key={expense._id}
+              className="rounded-3xl border border-slate-700 bg-slate-900/80 backdrop-blur-xl shadow-2xl"
+            >
+              <CardContent className="space-y-5 p-6">
+
+                <h2 className="text-2xl font-bold text-white">
+                  Edit Expense
+                </h2>
+
+                <input
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Expense Title"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+                />
+
+                <input
+                  type="number"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  placeholder="Amount"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+                />
+
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      category: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="rounded-xl border-slate-700 bg-slate-800 text-white">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="Food">🍔 Food</SelectItem>
+                    <SelectItem value="Transport">🚗 Transport</SelectItem>
+                    <SelectItem value="Shopping">🛍 Shopping</SelectItem>
+                    <SelectItem value="Bills">💡 Bills</SelectItem>
+                    <SelectItem value="Health">🏥 Health</SelectItem>
+                    <SelectItem value="Entertainment">
+                      🎬 Entertainment
+                    </SelectItem>
+                    <SelectItem value="Other">
+                      📦 Other
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none"
+                />
+
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleUpdate}
+                    className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    Save
+                  </Button>
+
+                  <Button
+                    variant="secondary"
+                    className="flex-1 rounded-xl"
+                    onClick={() => setEditingField(null)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+
+              </CardContent>
+            </Card>
+          ) : (
+            <Card
+              key={expense._id}
+              className="group overflow-hidden rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-indigo-500 hover:shadow-[0_20px_60px_rgba(79,70,229,0.35)]"
+            >
+              <CardContent className="p-6">
+
+                <div className="flex items-start justify-between">
+
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">
+                      {expense.title}
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-400">
+                      Expense Record
+                    </p>
+                  </div>
+
+                  <Badge className="rounded-full bg-indigo-500 text-white px-4 py-1">
+                    {expense.category}
+                  </Badge>
+
+                </div>
+
+                <div className="my-8 flex items-center gap-3">
+
+                  <div className="rounded-xl bg-emerald-500/20 p-3">
+                    <IndianRupee
+                      size={22}
+                      className="text-emerald-400"
+                    />
+                  </div>
+
+                  <span className="text-4xl font-bold text-emerald-400">
+                    {expense.amount}
+                  </span>
+
+                </div>
+
+                <div className="space-y-4">
+
+                  <div className="flex items-center gap-3 rounded-xl bg-slate-800/60 p-3">
+                    <Tag
+                      size={18}
+                      className="text-blue-400"
+                    />
+                    <span className="text-slate-300">
+                      {expense.category}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-xl bg-slate-800/60 p-3">
+                    <Calendar
+                      size={18}
+                      className="text-pink-400"
+                    />
+                    <span className="text-slate-300">
+                      {new Date(
+                        expense.date
+                      ).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                </div>
+
+                <div className="mt-8 flex gap-4">
+
+                  <Button
+                    variant="destructive"
+                    className="flex-1 rounded-xl"
+                    onClick={() => handleDelete(expense._id)}
+                  >
+                    Delete
+                  </Button>
+
+                  <Button
+                    className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-700"
+                    onClick={() => handleEdit(expense)}
+                  >
+                    Edit
+                  </Button>
+
+                </div>
+
+              </CardContent>
+            </Card>
+          )
+        )}
+      </div>
+    )}
+  </div>
+</div>
   );
 };
 export default Page;

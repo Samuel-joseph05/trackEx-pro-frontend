@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createUser } from "@/api/User";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -15,7 +17,7 @@ export default function RegisterPage() {
     phone: "",
     password: "",
   });
-
+const router =useRouter();
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -78,13 +80,15 @@ export default function RegisterPage() {
     try {
       const data = await createUser(form);
       console.log(data);
-      alert("User Registered Successfully");
+      // alert("User Registered Successfully");
+      toast.success("User Registered Successfully");
       setForm({
         name: "",
         email: "",
         phone: "",
         password: "",
       });
+      router.push("/expenseForm");
     } catch (error) {
       console.error(error);
       console.log(error.response?.data);
@@ -101,33 +105,35 @@ export default function RegisterPage() {
 
           <form  onSubmit={handleSubmit}className="space-y-5">
             <div>
-              <Label>Name</Label>
+              <Label className="text-lg">Name</Label>
 
               <Input
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Samuel"
+                className="h-11 pl-10"
               />
 
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             </div>
 
             <div>
-              <Label>Email</Label>
+              <Label className="text-lg">Email</Label>
 
               <Input
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="samuel@gmail.com"
+                className="h-11 pl-10"
               />
 
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             </div>
 
             <div>
-              <Label>Phone Number</Label>
+              <Label className="text-lg">Phone Number</Label>
 
               <Input
                 name="phone"
@@ -136,13 +142,14 @@ export default function RegisterPage() {
                 pattern="[0-9]{10}"
                 onChange={handleChange}
                 placeholder="9876543210"
+                className="h-11 pl-10"
               />
 
               <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
             </div>
 
             <div>
-              <Label>Password</Label>
+              <Label className="text-lg">Password</Label>
 
               <div className="relative">
                 <Input
@@ -151,13 +158,13 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="Password"
-                  className="pr-12"
+                  className="pr-12 h-11 pl-10"
                 />
 
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5"
+                  className="absolute right-3 top-2.5 "
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -166,7 +173,7 @@ export default function RegisterPage() {
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             </div>
 
-            <Button className="w-full" type="submit" >Register</Button>
+            <Button className="w-full p-5 text-lg" type="submit " >Register</Button>
           </form>
         </CardContent>
       </Card>

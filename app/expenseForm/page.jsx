@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function ExpenseForm() {
   const [form, setForm] = useState({
@@ -25,6 +27,7 @@ export default function ExpenseForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const router= useRouter();
 
   const handleChange = (e) => {
     setForm({
@@ -74,13 +77,15 @@ export default function ExpenseForm() {
     try {
       const data = await createExpense(form);
       console.log(data);
-      alert("Expense added");
+      // alert("Expense added");
+      toast.success("Expense added successfully");
       setForm({
         title: "",
         amount: "",
         category: "",
         date: "",
       });
+      router.push("/expenses");
     } catch (error) {
       console.error(error);
       console.log(error.response?.data);
