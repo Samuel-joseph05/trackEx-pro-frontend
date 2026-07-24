@@ -3,7 +3,7 @@ import { API } from "./axios";
 
 
 export const createExpense=async(expenseData)=>{
-    const res=await API.post("/expenseRegister",expenseData)
+    const res=await API.post("/expense",expenseData)
     return res.data;
 }
 
