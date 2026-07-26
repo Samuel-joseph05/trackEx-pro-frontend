@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/api/User";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [form, setForm] = useState({
@@ -62,6 +63,7 @@ const router = useRouter();
       setLoading(true);
 
       const data = await loginUser(form);
+       
 
       //save token to local storage
       localStorage.setItem("token",data.token)
@@ -71,6 +73,7 @@ const router = useRouter();
 
     router.push("/expenseForm");
     } catch (error) {
+       toast.error(error.response?.data?.message || "Login failed");
       console.log(error.response?.data || error.message);
     } finally {
       setLoading(false);
@@ -78,125 +81,148 @@ const router = useRouter();
   };
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-sky-100 via-cyan-50 to-indigo-100 px-4">
+   <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10">
 
-      {/* Background Glow */}
-      <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-cyan-300/40 blur-3xl" />
-      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-indigo-300/40 blur-3xl" />
+  <Card className="w-full max-w-md rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.35)]">
 
-      <Card className="relative w-full max-w-md rounded-3xl border-white/40 bg-white/70 shadow-2xl backdrop-blur-xl">
+    <CardContent className="p-8">
 
-        <CardContent className="p-8">
+      <div className="mb-8 text-center">
 
-          <h1 className="text-center text-3xl font-bold">
-            Welcome Back 👋
-          </h1>
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/20">
+          <Lock className="h-8 w-8 text-indigo-400" />
+        </div>
 
-          <p className="mt-2 text-center text-gray-500">
-            Login to manage your expenses
-          </p>
+        <h1 className="text-4xl font-bold text-white">
+          Welcome Back
+        </h1>
 
-          <form
-            onSubmit={handleSubmit}
-            className="mt-8 space-y-5"
-          >
-            {/* Phone */}
+        <p className="mt-2 text-slate-400">
+          Sign in to manage your expenses
+        </p>
 
-            <div>
-              <Label>Phone Number</Label>
+      </div>
 
-              <div className="relative mt-2">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6"
+      >
 
-                <Phone className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+        {/* Phone */}
 
-                <Input
-                  name="phone"
-                  type="text"
-                   maxLength={10}
-                pattern="[0-9]{10}"
-                  placeholder="9876543210"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className="h-11 pl-10"
-                />
+        <div className="space-y-2">
 
-              </div>
+          <Label className="text-slate-300">
+            Phone Number
+          </Label>
 
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.phone}
-                </p>
-              )}
-            </div>
+          <div className="relative">
 
-            {/* Password */}
+            <Phone
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              size={18}
+            />
 
-            <div>
-              <Label>Password</Label>
+            <Input
+              name="phone"
+              type="text"
+              maxLength={10}
+              pattern="[0-9]{10}"
+              placeholder="9876543210"
+              value={form.phone}
+              onChange={handleChange}
+              className="h-12 rounded-xl border-slate-700 bg-slate-900/70 pl-10 text-white placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
+            />
 
-              <div className="relative mt-2">
+          </div>
 
-                <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+          {errors.phone && (
+            <p className="text-sm text-red-400">
+              {errors.phone}
+            </p>
+          )}
 
-                <Input
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter Password"
-                  value={form.password}
-                  onChange={handleChange}
-                  className="h-11 pl-10 pr-10"
-                />
+        </div>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  className="absolute right-3 top-3 text-gray-500"
-                >
-                  {showPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
-                </button>
+        {/* Password */}
 
-              </div>
+        <div className="space-y-2">
 
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.password}
-                </p>
-              )}
-            </div>
+          <Label className="text-slate-300">
+            Password
+          </Label>
 
-            {/* Login Button */}
+          <div className="relative">
 
-            <Button
-              type="submit"
-              className="h-11 w-full rounded-xl bg-indigo-600 hover:bg-indigo-700"
-              disabled={loading}
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              size={18}
+            />
+
+            <Input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={form.password}
+              onChange={handleChange}
+              className="h-12 rounded-xl border-slate-700 bg-slate-900/70 pl-10 pr-12 text-white placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
+            />
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-white"
             >
-              {loading ? "Logging in..." : "Login"}
-            </Button>
-          </form>
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
 
-          {/* Register */}
+          </div>
 
-          <p className="mt-6 text-center text-sm text-gray-500">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-semibold text-indigo-600 hover:underline"
-            >
-              Register
-            </Link>
-          </p>
+          {errors.password && (
+            <p className="text-sm text-red-400">
+              {errors.password}
+            </p>
+          )}
 
-        </CardContent>
+        </div>
 
-      </Card>
+        {/* Login Button */}
 
-    </main>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="h-12 w-full rounded-xl bg-indigo-600 text-lg font-semibold transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </Button>
+
+      </form>
+
+      <div className="mt-8 border-t border-slate-700 pt-6 text-center">
+
+        <p className="text-slate-400">
+          Don`&apos;`t have an account?
+        </p>
+
+        <Link
+          href="/register"
+          className="mt-2 inline-block font-semibold text-indigo-400 transition-colors hover:text-indigo-300"
+        >
+          Create Account
+        </Link>
+
+      </div>
+
+    </CardContent>
+
+  </Card>
+
+</main>
   );
 }
