@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, IndianRupee, Tag } from "lucide-react";
+import { Calendar, IndianRupee, LogOut, Tag } from "lucide-react";
 import { getExpenses, deleteExpense, UpdateExpense } from "@/api/Expense";
 import { useEffect, useState } from "react";
 
@@ -28,7 +28,10 @@ const Page = () => {
     date: "",
   });
 const router = useRouter();
+
   //
+
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -80,7 +83,10 @@ const router = useRouter();
       console.log(err);
     }
   };
-
+const handleLogout=()=>{
+  localStorage.removeItem("token");
+  router.replace("/login")// Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
+}
 
 
   useEffect(() => {
@@ -88,29 +94,49 @@ const router = useRouter();
     fetchExpenses();
   }, []);
 
+ // Check if user is logged in, if not redirect to login page 
+useEffect(()=>{
+  const token=localStorage.getItem("token")
+  if(!token){
+    router.push("/login")
+  }
+},[router])
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-6">
   <div className="max-w-7xl mx-auto">
 
-    {/* Heading */}
-    <div className="mb-10 flex items-center justify-between">
-      <div>
-        <h1 className="text-5xl font-bold text-white">
-          Expense Dashboard
-        </h1>
-        <p className="text-slate-400 mt-2">
-          Manage your daily expenses efficiently.
-        </p>
-      </div>
-      <div>
-      <button
-  onClick={() => router.push("/expenseForm")}
-  className="w-full sm:w-auto rounded-xl bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
->
-  Add Expense
-</button>
-      </div>
-    </div>
+  <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+  {/* Heading */}
+  <div>
+    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+      Expense Dashboard
+    </h1>
+
+    <p className="mt-2 text-sm sm:text-base text-slate-400">
+      Manage your daily expenses efficiently.
+    </p>
+  </div>
+
+  {/* Buttons */}
+  <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+    <button
+      onClick={() => router.push("/expenseForm")}
+      className="w-full sm:w-auto rounded-xl bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700"
+    >
+      Add Expense
+    </button>
+
+    <button
+      onClick={handleLogout}
+      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white transition hover:bg-red-700"
+    >
+      <LogOut size={18} />
+      Logout
+    </button>
+  </div>
+</div>
 
     {expenses.length === 0 ? (
       <div className="rounded-3xl border border-slate-700 bg-slate-900/60 backdrop-blur-xl p-16 text-center">
