@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IndianRupee } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +67,8 @@ export default function ExpenseForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -91,6 +93,15 @@ export default function ExpenseForm() {
       console.log(error.response?.data);
     }
   };
+
+
+  useEffect(()=>{
+    const token = localStorage.getItem("token")
+    if(!token){
+      router.replace("/login")// if user is not logged in, redirect to login page
+    }//replace is used instead of push to prevent user from going back to the previous page using the back button
+  },[router])// it will run only once when the component mounts, and it will not run again unless the router changes. This is useful for checking if the user is authenticated when they first visit the page.
+
 
   return (
     <main className="min-h-screen bg-linear-to-br from-blue-100 via-white to-indigo-100 flex items-center justify-center p-5">
