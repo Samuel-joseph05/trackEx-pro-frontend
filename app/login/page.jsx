@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginUser } from "@/api/User";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [form, setForm] = useState({
@@ -18,7 +20,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
+const router = useRouter();
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -59,13 +61,15 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      // Example:
-      // const data = await loginUser(form);
+      const data = await loginUser(form);
+
+      //save token to local storage
+      localStorage.setItem("token",data.token)
       // console.log(data);
 
-      console.log(form);
+      // console.log(form);
 
-      alert("Login Successful");
+    router.push("/expenseForm");
     } catch (error) {
       console.log(error.response?.data || error.message);
     } finally {
