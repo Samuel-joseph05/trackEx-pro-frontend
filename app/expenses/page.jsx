@@ -83,10 +83,10 @@ const router = useRouter();
       console.log(err);
     }
   };
-const handleLogout=()=>{
-  localStorage.removeItem("token");
-  router.replace("/login")// Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
-}
+// const handleLogout=()=>{
+//   localStorage.removeItem("token");
+//   router.replace("/login")// Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
+// }
 
 
   useEffect(() => {
@@ -128,13 +128,13 @@ useEffect(()=>{
       Add Expense
     </button>
 
-    <button
+    {/* <button
       onClick={handleLogout}
       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white transition hover:bg-red-700"
     >
       <LogOut size={18} />
       Logout
-    </button>
+    </button> */}
   </div>
 </div>
 
