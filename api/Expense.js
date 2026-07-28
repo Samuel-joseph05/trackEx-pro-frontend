@@ -20,3 +20,7 @@ export const deleteExpense=async(id)=>{
     const res=await API.delete(`/expense/${id}`)
     return res.data;
 }
+export const getDashboard =async()=>{
+    const res=await  API.get("/dashboard")
+    return res.data;
+}
