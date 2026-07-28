@@ -25,11 +25,19 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         {children}
-          <Toaster
-          position="top-right"
-          richColors
-          closeButton className="w-[90vw] sm:w-60"
-        />
+       <Toaster
+        position="top-right"
+        richColors
+        expand={true}
+        duration={2000}
+        // closeButton={false}
+        visibleToasts={3}
+        toastOptions={{
+          style: {
+            maxWidth: "90vw",
+          },
+        }}
+      />
       </body>
     </html>
   );
