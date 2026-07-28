@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function ExpenseForm() {
   const [form, setForm] = useState({
@@ -214,13 +215,21 @@ export default function ExpenseForm() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          className="h-12 w-full rounded-xl bg-indigo-600 text-lg font-semibold transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95"
-        >
-          Add Expense
-        </Button>
+     <div className="space-y-4">
+  <Button
+    type="submit"
+    className="h-12 w-full rounded-xl bg-indigo-600 text-lg font-semibold transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95"
+  >
+    Add Expense
+  </Button>
 
+  <Link
+    href="/expenses"
+    className="flex h-12 w-full items-center justify-center rounded-xl border border-green-600 text-lg font-semibold text-indigo-600 transition-all duration-300 hover:bg-indigo-600 hover:text-white hover:shadow-lg hover:shadow-indigo-500/20 active:scale-95"
+  >
+    Show Expenses
+  </Link>
+</div>
       </form>
     </CardContent>
   </Card>
