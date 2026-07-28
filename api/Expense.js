@@ -7,8 +7,8 @@ export const createExpense=async(expenseData)=>{
     return res.data;
 }
 
-export const getExpenses=async()=>{
-    const res=await API.get("/expenses")
+export const getExpenses=async(search ="",category="All")=>{
+    const res=await API.get("/expenses",{params:{search,category},})
     return res.data;
 }
 export const UpdateExpense=async(id,expenseData)=>{
