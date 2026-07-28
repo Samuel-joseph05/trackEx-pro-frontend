@@ -84,7 +84,7 @@ const router =useRouter();
 
   
       localStorage.setItem("token",data.token)// save token to local storage
-      console.log(localStorage.getItem("token"));
+      // console.log(localStorage.getItem("token"));
             toast.success("User Registered Successfully");
           setForm({
         name: "",
@@ -92,7 +92,7 @@ const router =useRouter();
         phone: "",
         password: "",
       });
-      router.push("/expenseForm");
+      router.push("/dashboard");
     } catch (error) {
         toast.error(error.response?.data?.message || "Registration failed");
       console.error(error);
