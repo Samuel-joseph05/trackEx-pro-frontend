@@ -71,7 +71,7 @@ const router = useRouter();
 
       // console.log(form);
 
-    router.push("/expenseForm");
+    router.push("/dashboard");
     } catch (error) {
        toast.error(error.response?.data?.message || "Login failed");
       console.log(error.response?.data || error.message);
@@ -207,7 +207,7 @@ const router = useRouter();
       <div className="mt-8 border-t border-slate-700 pt-6 text-center">
 
         <p className="text-slate-400">
-          Don`&apos;`t have an account?
+         Don&apos;t have an account?
         </p>
 
         <Link
