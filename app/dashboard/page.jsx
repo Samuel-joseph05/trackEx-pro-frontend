@@ -1,11 +1,183 @@
-import React from 'react'
+"use client";
 
-const page = () => {
+import Link from "next/link";
+import {
+  Wallet,
+  Calendar,
+  Receipt,
+  Tag,
+  Plus,
+  IndianRupee,
+  LogOut,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { getDashboard } from "@/api/Expense";
+import { useRouter } from "next/navigation";
+
+export default function Dashboard() {
+  const [dashboard, setDashboard] = useState(null);
+  const router=useRouter();
+  const cards = [
+    {
+      title: "Total Expenses",
+      value: `₹${dashboard?.totalExpenses ?? 0}`,
+      icon: Wallet,
+      color: "bg-emerald-500/20 text-emerald-400",
+    },
+    {
+      title: "This Month",
+      value: `₹${dashboard?.thisMonthExpenses ?? 0}`,
+      icon: Calendar,
+      color: "bg-blue-500/20 text-blue-400",
+    },
+    {
+      title: "Transactions",
+      value: dashboard?.totalTransaction ?? 0,
+      icon: Receipt,
+      color: "bg-orange-500/20 text-orange-400",
+    },
+    {
+      title: "Categories",
+      value: dashboard?.categories ?? 0,
+      icon: Tag,
+      color: "bg-pink-500/20 text-pink-400",
+    },
+  ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.replace("/login"); // Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
+  };
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const data = await getDashboard();
+        setDashboard(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+
+   // Check if user is logged in, if not redirect to login page 
+useEffect(()=>{
+  const token=localStorage.getItem("token")
+  if(!token){
+    router.push("/login")
+  }
+},[router])
+
   return (
-    <div>
-      hi user
-    </div>
-  )
-}
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+      <div className="mx-auto max-w-7xl px-6 py-10">
+        {/* Header */}
 
-export default page
+        <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-white">Expense Dashboard</h1>
+
+            <p className="mt-2 text-slate-400">
+              Track your spending and manage your finances.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <Link href="/expenses">
+              <Button className="rounded-xl bg-indigo-600 px-6 py-6 text-base hover:bg-indigo-700">
+                <Plus className="mr-2 h-5 w-5" />
+                Add Expense
+              </Button>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white transition hover:bg-red-700"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Dashboard Cards */}
+
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {cards.map((card) => {
+            const Icon = card.icon;
+
+            return (
+              <Card
+                key={card.title}
+                className="rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(79,70,229,0.35)]"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-400">{card.title}</p>
+
+                      <h2 className="mt-3 text-3xl font-bold text-white">
+                        {card.value}
+                      </h2>
+                    </div>
+
+                    <div className={`rounded-2xl p-4 ${card.color}`}>
+                      <Icon className="h-7 w-7" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Quick Summary */}
+
+        <Card className="mt-10 rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl">
+          <CardContent className="p-8">
+            <h2 className="mb-6 text-2xl font-bold text-white">
+              Financial Overview
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="rounded-2xl bg-slate-800/60 p-6">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl bg-emerald-500/20 p-3">
+                    <IndianRupee className="text-emerald-400" />
+                  </div>
+
+                  <div>
+                    <p className="text-slate-400">Total Spending</p>
+
+                    <h3 className="text-3xl font-bold text-emerald-400">
+                      ₹{dashboard?.totalExpenses ?? 0}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-slate-800/60 p-6">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl bg-indigo-500/20 p-3">
+                    <Calendar className="text-indigo-400" />
+                  </div>
+
+                  <div>
+                    <p className="text-slate-400">Monthly Spending</p>
+
+                    <h3 className="text-3xl font-bold text-indigo-400">
+                      ₹{dashboard?.thisMonthExpense ?? 0}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
