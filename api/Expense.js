@@ -24,3 +24,7 @@ export const getDashboard =async()=>{
     const res=await  API.get("/dashboard")
     return res.data;
 }
+export const getMonthlySummary=async()=>{
+    const res= await API.get("/monthly-summary")
+    return res.data;
+}
