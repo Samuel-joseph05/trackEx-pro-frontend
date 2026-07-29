@@ -10,15 +10,32 @@ import {
   IndianRupee,
   LogOut,
 } from "lucide-react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { getDashboard } from "@/api/Expense";
+import { getDashboard, getMonthlySummary } from "@/api/Expense";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
+const [monthlySummary, setMonthlySummary] = useState([]);
   const router=useRouter();
+
+
+const chartData = monthlySummary.map((item) => ({
+  month: `${item.month} ${item.year}`,
+  total: item.total,
+}));
   const cards = [
     {
       title: "Total Expenses",
@@ -46,32 +63,54 @@ export default function Dashboard() {
     },
   ];
 
+ 
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.replace("/login"); // Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
   };
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const data = await getDashboard();
-        setDashboard(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
 
-    fetchDashboard();
-  }, []);
+//   const fetchMonthlySummary = async () => {
+//   try {
+//     const data = await getMonthlySummary();
+//     console.log(data);
+
+//     setMonthlySummary(data);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+
+useEffect(() => {
+  const load = async () => {
+    try {
+      const dashboard = await getDashboard();
+      setDashboard(dashboard);
+
+      const summary = await getMonthlySummary();
+      setMonthlySummary(summary);
+      console.log(summary);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  load();
+}, []);
+
 
 
    // Check if user is logged in, if not redirect to login page 
-useEffect(()=>{
-  const token=localStorage.getItem("token")
-  if(!token){
-    router.push("/login")
+useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    // toast.error("Login first");
+    router.replace("/login");
   }
-},[router])
+}, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
@@ -134,6 +173,109 @@ useEffect(()=>{
           })}
         </div>
 
+ <div className="mt-10 rounded-3xl border border-slate-700 bg-white/10 p-8 shadow-[0_20px_50px_rgba(79,70,229,0.25)] backdrop-blur-xl">
+
+  {/* Header */}
+  <div className="mb-8 flex items-center justify-between">
+
+    <div>
+      <h2 className="text-2xl font-bold text-white">
+        Monthly Expense Analytics
+      </h2>
+
+      <p className="mt-1 text-sm text-slate-400">
+        Track your monthly spending trends.
+      </p>
+    </div>
+
+  </div>
+
+  {/* Chart */}
+  <div className="h-80">
+
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={chartData}>
+
+        <CartesianGrid
+          stroke="#475569"
+          strokeDasharray="4 4"
+        />
+
+        <XAxis
+          dataKey="month"
+          tick={{ fill: "#cbd5e1", fontSize: 12 }}
+          axisLine={{ stroke: "#64748b" }}
+          tickLine={{ stroke: "#64748b" }}
+        />
+
+        <YAxis
+          tick={{ fill: "#cbd5e1", fontSize: 12 }}
+          axisLine={{ stroke: "#64748b" }}
+          tickLine={{ stroke: "#64748b" }}
+        />
+
+        <Tooltip
+          cursor={{ fill: "rgba(99,102,241,0.15)" }}
+          contentStyle={{
+            backgroundColor: "#0f172a",
+            border: "1px solid #334155",
+            borderRadius: "12px",
+            color: "#fff",
+          }}
+          labelStyle={{
+            color: "#fff",
+            fontWeight: "bold",
+          }}
+          formatter={(value) => [`₹${value}`, "Expense"]}
+        />
+
+        <Bar
+          dataKey="total"
+          fill="#6366f1"
+          radius={[10, 10, 0, 0]}
+        />
+
+      </BarChart>
+    </ResponsiveContainer>
+
+  </div>
+
+</div>
+
+ {/* Table */}
+<div className="mt-8 rounded-xl  border border-slate-700 bg-white/10 backdrop-blur-xl p-6 shadow text-white">
+  <h2 className="mb-4 text-xl font-semibold">
+    Monthly Summary
+  </h2>
+
+  <table className="w-full">
+    <thead>
+      <tr className="border-b">
+        <th className="py-3 text-left">
+          Month
+        </th>
+
+        <th className="py-3 text-right">
+          Total Expense
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {monthlySummary.map((item, index) => (
+        <tr key={index} className="border-b hover:bg-slate-700 transition">
+          <td className="py-3">
+            {item.month} {item.year}
+          </td>
+
+          <td className="py-3 text-right font-bold text-blue-600">
+            ₹{item.total}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
         {/* Quick Summary */}
 
         <Card className="mt-10 rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl">
