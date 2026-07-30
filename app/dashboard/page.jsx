@@ -25,17 +25,19 @@ import { useEffect, useState } from "react";
 import { getDashboard, getMonthlySummary } from "@/api/Expense";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
-const [monthlySummary, setMonthlySummary] = useState([]);
-  const router=useRouter();
+  const [loading, setLoading] = useState(true);
+  const [monthlySummary, setMonthlySummary] = useState([]);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
-
-const chartData = monthlySummary.map((item) => ({
-  month: `${item.month} ${item.year}`,
-  total: item.total,
-}));
+  const chartData = monthlySummary.map((item) => ({
+    month: `${item.month} ${item.year}`,
+    total: item.total,
+  }));
   const cards = [
     {
       title: "Total Expenses",
@@ -63,63 +65,92 @@ const chartData = monthlySummary.map((item) => ({
     },
   ];
 
- 
-
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     router.replace("/login"); // Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
   };
 
+  //   const fetchMonthlySummary = async () => {
+  //   try {
+  //     const data = await getMonthlySummary();
+  //     console.log(data);
 
-//   const fetchMonthlySummary = async () => {
-//   try {
-//     const data = await getMonthlySummary();
-//     console.log(data);
+  //     setMonthlySummary(data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
-//     setMonthlySummary(data);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const dashboard = await getDashboard();
+        // await new Promise((resolve) => setTimeout(resolve, 3000)); //remove before production
 
+        setDashboard(dashboard);
 
-useEffect(() => {
-  const load = async () => {
-    try {
-      const dashboard = await getDashboard();
-      setDashboard(dashboard);
+        const summary = await getMonthlySummary();
+        setMonthlySummary(summary);
 
-      const summary = await getMonthlySummary();
-      setMonthlySummary(summary);
-      console.log(summary);
-    } catch (err) {
-      console.error(err);
+        console.log(summary);
+        const storedUser = localStorage.getItem("user");
+
+        // console.log("Stored User:", storedUser);
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+
+          // console.log("Parsed User:", parsedUser);
+
+          setUser(parsedUser);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("user");
+
+  //   if (storedUser) {
+  //     try {
+  //       setUser(JSON.parse(storedUser));
+  //     } catch (error) {
+  //       console.error("Invalid user data in localStorage:", error);
+  //       localStorage.removeItem("user");
+  //     }
+  //   }
+  // }, []);
+
+  // Check if user is logged in, if not redirect to login page
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // toast.error("Login first");
+      router.replace("/login");
     }
-  };
+  }, [router]);
 
-  load();
-}, []);
-
-
-
-   // Check if user is logged in, if not redirect to login page 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    // toast.error("Login first");
-    router.replace("/login");
+  if (loading) {
+    return <DashboardSkeleton />;
   }
-}, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+    <main className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950">
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
 
         <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white">Expense Dashboard</h1>
+            <h1 className="text-3xl font-bold text-white">
+              Welcome, <span className="text-2xl text-yellow-200">{user?.name}</span> 👋
+            </h1>
 
             <p className="mt-2 text-slate-400">
               Track your spending and manage your finances.
@@ -173,109 +204,91 @@ useEffect(() => {
           })}
         </div>
 
- <div className="mt-10 rounded-3xl border border-slate-700 bg-white/10 p-8 shadow-[0_20px_50px_rgba(79,70,229,0.25)] backdrop-blur-xl">
+        <div className="mt-10 rounded-3xl border border-slate-700 bg-white/10 p-8 shadow-[0_20px_50px_rgba(79,70,229,0.25)] backdrop-blur-xl">
+          {/* Header */}
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                Monthly Expense Analytics
+              </h2>
 
-  {/* Header */}
-  <div className="mb-8 flex items-center justify-between">
+              <p className="mt-1 text-sm text-slate-400">
+                Track your monthly spending trends.
+              </p>
+            </div>
+          </div>
 
-    <div>
-      <h2 className="text-2xl font-bold text-white">
-        Monthly Expense Analytics
-      </h2>
+          {/* Chart */}
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid stroke="#475569" strokeDasharray="4 4" />
 
-      <p className="mt-1 text-sm text-slate-400">
-        Track your monthly spending trends.
-      </p>
-    </div>
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: "#cbd5e1", fontSize: 12 }}
+                  axisLine={{ stroke: "#64748b" }}
+                  tickLine={{ stroke: "#64748b" }}
+                />
 
-  </div>
+                <YAxis
+                  tick={{ fill: "#cbd5e1", fontSize: 12 }}
+                  axisLine={{ stroke: "#64748b" }}
+                  tickLine={{ stroke: "#64748b" }}
+                />
 
-  {/* Chart */}
-  <div className="h-80">
+                <Tooltip
+                  cursor={{ fill: "rgba(99,102,241,0.15)" }}
+                  contentStyle={{
+                    backgroundColor: "#0f172a",
+                    border: "1px solid #334155",
+                    borderRadius: "12px",
+                    color: "#fff",
+                  }}
+                  labelStyle={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                  }}
+                  formatter={(value) => [`₹${value}`, "Expense"]}
+                />
 
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={chartData}>
+                <Bar dataKey="total" fill="#6366f1" radius={[10, 10, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-        <CartesianGrid
-          stroke="#475569"
-          strokeDasharray="4 4"
-        />
+        {/* Table */}
+        <div className="mt-8 rounded-xl  border border-slate-700 bg-white/10 backdrop-blur-xl p-6 shadow text-white">
+          <h2 className="mb-4 text-xl font-semibold">Monthly Summary</h2>
 
-        <XAxis
-          dataKey="month"
-          tick={{ fill: "#cbd5e1", fontSize: 12 }}
-          axisLine={{ stroke: "#64748b" }}
-          tickLine={{ stroke: "#64748b" }}
-        />
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="py-3 text-left">Month</th>
 
-        <YAxis
-          tick={{ fill: "#cbd5e1", fontSize: 12 }}
-          axisLine={{ stroke: "#64748b" }}
-          tickLine={{ stroke: "#64748b" }}
-        />
+                <th className="py-3 text-right">Total Expense</th>
+              </tr>
+            </thead>
 
-        <Tooltip
-          cursor={{ fill: "rgba(99,102,241,0.15)" }}
-          contentStyle={{
-            backgroundColor: "#0f172a",
-            border: "1px solid #334155",
-            borderRadius: "12px",
-            color: "#fff",
-          }}
-          labelStyle={{
-            color: "#fff",
-            fontWeight: "bold",
-          }}
-          formatter={(value) => [`₹${value}`, "Expense"]}
-        />
+            <tbody>
+              {monthlySummary.map((item, index) => (
+                <tr
+                  key={index}
+                  className="border-b hover:bg-slate-700 transition"
+                >
+                  <td className="py-3">
+                    {item.month} {item.year}
+                  </td>
 
-        <Bar
-          dataKey="total"
-          fill="#6366f1"
-          radius={[10, 10, 0, 0]}
-        />
-
-      </BarChart>
-    </ResponsiveContainer>
-
-  </div>
-
-</div>
-
- {/* Table */}
-<div className="mt-8 rounded-xl  border border-slate-700 bg-white/10 backdrop-blur-xl p-6 shadow text-white">
-  <h2 className="mb-4 text-xl font-semibold">
-    Monthly Summary
-  </h2>
-
-  <table className="w-full">
-    <thead>
-      <tr className="border-b">
-        <th className="py-3 text-left">
-          Month
-        </th>
-
-        <th className="py-3 text-right">
-          Total Expense
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {monthlySummary.map((item, index) => (
-        <tr key={index} className="border-b hover:bg-slate-700 transition">
-          <td className="py-3">
-            {item.month} {item.year}
-          </td>
-
-          <td className="py-3 text-right font-bold text-blue-600">
-            ₹{item.total}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                  <td className="py-3 text-right font-bold text-blue-600">
+                    ₹{item.total}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {/* Quick Summary */}
 
         <Card className="mt-10 rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl">
