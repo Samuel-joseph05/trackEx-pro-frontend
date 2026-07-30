@@ -1,8 +1,19 @@
 "use client";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { motion } from "motion/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, IndianRupee, LogOut, Tag } from "lucide-react";
+import { Calendar, IndianRupee, LogOut, Search, Tag } from "lucide-react";
 import { getExpenses, deleteExpense, UpdateExpense } from "@/api/Expense";
 import { useEffect, useState } from "react";
 
@@ -17,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import ExpenseListSkeleton from "@/components/skeletons/ExpenseListSkeleton";
 
 const Page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -29,6 +41,7 @@ const Page = () => {
   });
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  // const [loading,setLoading]=useState(false)
   const router = useRouter();
 
   //
@@ -43,10 +56,17 @@ const Page = () => {
   const fetchExpenses = async () => {
     try {
       const data = await getExpenses(search, category);
+      //      await new Promise((resolve) =>
+      //   setTimeout(resolve, 3000)
+      // );//remove before production
+
       setExpenses(data);
     } catch (err) {
       console.log("Failed to fetch", err);
     }
+    // finally{
+    //   setLoading(false)
+    // }
   };
 
   const handleDelete = async (id) => {
@@ -102,8 +122,17 @@ const Page = () => {
     }
   }, [router]);
 
+  // if(loading){
+  //   return <ExpenseListSkeleton/>
+  // }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-6"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Heading */}
@@ -134,19 +163,24 @@ const Page = () => {
       Logout
     </button> */}
           </div>
+        
+        </div>
           <div className="flex justify-center items-center w-full py-6">
+            
             <Input
               placeholder="Search expenses..."
               value={search}
+              
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 text-white placeholder:text-slate-400 px-4 py-2 shadow-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 text-white placeholder:text-slate-400 px-4 lg:py-6 shadow-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
             />
+           
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-52 text-white">
+              <SelectTrigger className="w-52 px-2 lg:py-6  m-2 text-white">
                 <SelectValue />
               </SelectTrigger>
 
-              <SelectContent >
+              <SelectContent className="bg-slate-700 text-white">
                 <SelectItem value="All">All</SelectItem>
                 <SelectItem value="Food">Food</SelectItem>
                 <SelectItem value="Transport">Transport</SelectItem>
@@ -158,7 +192,6 @@ const Page = () => {
               </SelectContent>
             </Select>
           </div>
-        </div>
 
         {expenses.length === 0 ? (
           <div className="rounded-3xl border border-slate-700 bg-slate-900/60 backdrop-blur-xl p-16 text-center">
@@ -170,7 +203,9 @@ const Page = () => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+          <div
+            className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3"
+          >
             {expenses.map((expense) =>
               editingField === expense._id ? (
                 <Card
@@ -300,13 +335,49 @@ const Page = () => {
                     </div>
 
                     <div className="mt-8 flex gap-4">
-                      <Button
+                      {/* <Button
                         variant="destructive"
                         className="flex-1 rounded-xl"
                         onClick={() => handleDelete(expense._id)}
                       >
                         Delete
-                      </Button>
+                      </Button> */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            className="flex-1 rounded-xl"
+                          >
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent className="border-slate-700 bg-slate-900 text-white">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Expense?</AlertDialogTitle>
+
+                            <AlertDialogDescription className="text-slate-400">
+                              This action cannot be undone.
+                              <br />
+                              The expense <strong>{expense.title}</strong> will
+                              be permanently deleted.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="border-slate-700 bg-slate-800 text-white hover:bg-slate-700">
+                              Cancel
+                            </AlertDialogCancel>
+
+                            <AlertDialogAction
+                              onClick={() => handleDelete(expense._id)}
+                              className=" bg-red-600 hover:bg-red-700 "
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
 
                       <Button
                         className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-700"
@@ -322,7 +393,7 @@ const Page = () => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 export default Page;
