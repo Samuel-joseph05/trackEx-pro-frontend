@@ -85,6 +85,7 @@ const router =useRouter();
   
       localStorage.setItem("token",data.token)// save token to local storage
       // console.log(localStorage.getItem("token"));
+      localStorage.setItem("user", JSON.stringify(data.user));
             toast.success("User Registered Successfully");
           setForm({
         name: "",
