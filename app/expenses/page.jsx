@@ -1,130 +1,55 @@
 "use client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { motion } from "motion/react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, IndianRupee, LogOut, Search, Tag } from "lucide-react";
-import { getExpenses, deleteExpense, UpdateExpense } from "@/api/Expense";
-import { useEffect, useState } from "react";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { motion } from "motion/react";
+import DashboardHeader from "./components/DashboardHeader";
+import ExpenseFilters from "./components/ExpenseFilters";
+import ExpenseCard from "./components/ExpenseCard";
+import EditExpenseCard from "./components/EditExpenseCard";
+import ExpenseGrid from "./components/ExpenseGrid";
+import EmptyExpenses from "./components/EmptyExpenses";
+import Pagination from "./components/Pagination";
+
+import { useEffect } from "react";
+
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import ExpenseListSkeleton from "@/components/skeletons/ExpenseListSkeleton";
+import useExpenses from "./components/hooks/useExpenses";
 
 const Page = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [editingField, setEditingField] = useState(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    amount: "",
-    category: "",
-    date: "",
-  });
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  // const [loading,setLoading]=useState(false)
+  const {
+    expenses,
+    editingField,
+    formData,
+
+    search,
+    category,
+    sort,
+
+    page,
+    totalPages,
+
+    setSearch,
+    setCategory,
+    setSort,
+
+    setPage,
+
+    setFormData,
+    setEditingField,
+
+    handleDelete,
+    handleEdit,
+    handleUpdate,
+    handleChange,
+  } = useExpenses();
   const router = useRouter();
 
-  //
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const fetchExpenses = async () => {
-    try {
-      const data = await getExpenses(search, category);
-      //      await new Promise((resolve) =>
-      //   setTimeout(resolve, 3000)
-      // );//remove before production
-
-      setExpenses(data);
-    } catch (err) {
-      console.log("Failed to fetch", err);
-    }
-    // finally{
-    //   setLoading(false)
-    // }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteExpense(id);
-      // alert("Expense deleted successfully");
-      toast.success("Expense deleted successfully");
-      await fetchExpenses();
-    } catch (err) {
-      toast.error("Failed to delete expense");
-      console.log("Failed to delete expense", err);
-    }
-  };
-
-  const handleEdit = (expense) => {
-    setEditingField(expense._id);
-
-    setFormData({
-      title: expense.title,
-      amount: expense.amount,
-      category: expense.category,
-      date: expense.date.split("T")[0],
-    });
-  };
-
-  const handleUpdate = async () => {
-    try {
-      await UpdateExpense(editingField, formData);
-      // alert("Expense Updated Successfully");
-      toast.success("Expense Updated Successfully");
-      setEditingField(null);
-
-      fetchExpenses();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  // const handleLogout=()=>{
-  //   localStorage.removeItem("token");
-  //   router.replace("/login")// Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
-  // }
-
-  useEffect(() => {
-    console.log("Fetching expenses");
-    fetchExpenses();
-  }, [search, category]);
-
-  // Check if user is logged in, if not redirect to login page
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       router.push("/login");
     }
   }, [router]);
-
-  // if(loading){
-  //   return <ExpenseListSkeleton/>
-  // }
 
   return (
     <motion.div
@@ -134,263 +59,39 @@ const Page = () => {
       className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-6"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          {/* Heading */}
-          <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-              Expense Dashboard
-            </h1>
-
-            <p className="mt-2 text-sm sm:text-base text-slate-400">
-              Manage your daily expenses efficiently.
-            </p>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <button
-              onClick={() => router.push("/expenseForm")}
-              className="w-full sm:w-auto rounded-xl bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700"
-            >
-              Add Expense
-            </button>
-
-            {/* <button
-      onClick={handleLogout}
-      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white transition hover:bg-red-700"
-    >
-      <LogOut size={18} />
-      Logout
-    </button> */}
-          </div>
-        
-        </div>
-          <div className="flex justify-center items-center w-full py-6">
-            
-            <Input
-              placeholder="Search expenses..."
-              value={search}
-              
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 text-white placeholder:text-slate-400 px-4 lg:py-6 shadow-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-            />
-           
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-52 px-2 lg:py-6  m-2 text-white">
-                <SelectValue />
-              </SelectTrigger>
-
-              <SelectContent className="bg-slate-700 text-white">
-                <SelectItem value="All">All</SelectItem>
-                <SelectItem value="Food">Food</SelectItem>
-                <SelectItem value="Transport">Transport</SelectItem>
-                <SelectItem value="Shopping">Shopping</SelectItem>
-                <SelectItem value="Bills">Bills</SelectItem>
-                <SelectItem value="Health">Health</SelectItem>
-                <SelectItem value="Entertainment">Entertainment</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <DashboardHeader router={router} />
+        <ExpenseFilters
+          search={search}
+          setSearch={setSearch}
+          category={category}
+          setCategory={setCategory}
+          sort={sort}
+          setSort={setSort}
+        />
 
         {expenses.length === 0 ? (
-          <div className="rounded-3xl border border-slate-700 bg-slate-900/60 backdrop-blur-xl p-16 text-center">
-            <h2 className="text-2xl font-semibold text-white">
-              No Expenses Found
-            </h2>
-            <p className="mt-2 text-slate-400">
-              Add your first expense to start tracking.
-            </p>
-          </div>
+          <EmptyExpenses />
         ) : (
-          <div
-            className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3"
-          >
-            {expenses.map((expense) =>
-              editingField === expense._id ? (
-                <Card
-                  key={expense._id}
-                  className="rounded-3xl border border-slate-700 bg-slate-900/80 backdrop-blur-xl shadow-2xl"
-                >
-                  <CardContent className="space-y-5 p-6">
-                    <h2 className="text-2xl font-bold text-white">
-                      Edit Expense
-                    </h2>
+         <>
+              <ExpenseGrid
+                expenses={expenses}
+                editingField={editingField}
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+                handleUpdate={handleUpdate}
+                setEditingField={setEditingField}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
 
-                    <input
-                      name="title"
-                      value={formData.title}
-                      onChange={handleChange}
-                      placeholder="Expense Title"
-                      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
-                    />
-
-                    <input
-                      type="number"
-                      name="amount"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      placeholder="Amount"
-                      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
-                    />
-
-                    <Select
-                      value={formData.category}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          category: value,
-                        })
-                      }
-                    >
-                      <SelectTrigger className="rounded-xl border-slate-700 bg-slate-800 text-white">
-                        <SelectValue placeholder="Category" />
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectItem value="Food">🍔 Food</SelectItem>
-                        <SelectItem value="Transport">🚗 Transport</SelectItem>
-                        <SelectItem value="Shopping">🛍 Shopping</SelectItem>
-                        <SelectItem value="Bills">💡 Bills</SelectItem>
-                        <SelectItem value="Health">🏥 Health</SelectItem>
-                        <SelectItem value="Entertainment">
-                          🎬 Entertainment
-                        </SelectItem>
-                        <SelectItem value="Other">📦 Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none"
-                    />
-
-                    <div className="flex gap-4">
-                      <Button
-                        onClick={handleUpdate}
-                        className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700"
-                      >
-                        Save
-                      </Button>
-
-                      <Button
-                        variant="secondary"
-                        className="flex-1 rounded-xl"
-                        onClick={() => setEditingField(null)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Card
-                  key={expense._id}
-                  className="group overflow-hidden rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-indigo-500 hover:shadow-[0_20px_60px_rgba(79,70,229,0.35)]"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h2 className="text-2xl font-bold text-white">
-                          {expense.title}
-                        </h2>
-
-                        <p className="mt-1 text-sm text-slate-400">
-                          Expense Record
-                        </p>
-                      </div>
-
-                      <Badge className="rounded-full bg-indigo-500 text-white px-4 py-1">
-                        {expense.category}
-                      </Badge>
-                    </div>
-
-                    <div className="my-8 flex items-center gap-3">
-                      <div className="rounded-xl bg-emerald-500/20 p-3">
-                        <IndianRupee size={22} className="text-emerald-400" />
-                      </div>
-
-                      <span className="text-4xl font-bold text-emerald-400">
-                        {expense.amount}
-                      </span>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 rounded-xl bg-slate-800/60 p-3">
-                        <Tag size={18} className="text-blue-400" />
-                        <span className="text-slate-300">
-                          {expense.category}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3 rounded-xl bg-slate-800/60 p-3">
-                        <Calendar size={18} className="text-pink-400" />
-                        <span className="text-slate-300">
-                          {new Date(expense.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-8 flex gap-4">
-                      {/* <Button
-                        variant="destructive"
-                        className="flex-1 rounded-xl"
-                        onClick={() => handleDelete(expense._id)}
-                      >
-                        Delete
-                      </Button> */}
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="destructive"
-                            className="flex-1 rounded-xl"
-                          >
-                            Delete
-                          </Button>
-                        </AlertDialogTrigger>
-
-                        <AlertDialogContent className="border-slate-700 bg-slate-900 text-white">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Expense?</AlertDialogTitle>
-
-                            <AlertDialogDescription className="text-slate-400">
-                              This action cannot be undone.
-                              <br />
-                              The expense <strong>{expense.title}</strong> will
-                              be permanently deleted.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="border-slate-700 bg-slate-800 text-white hover:bg-slate-700">
-                              Cancel
-                            </AlertDialogCancel>
-
-                            <AlertDialogAction
-                              onClick={() => handleDelete(expense._id)}
-                              className=" bg-red-600 hover:bg-red-700 "
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-
-                      <Button
-                        className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-700"
-                        onClick={() => handleEdit(expense)}
-                      >
-                        Edit
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ),
-            )}
-          </div>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                setPage={setPage}
+              />
+            </>
+          
         )}
       </div>
     </motion.div>
