@@ -159,8 +159,8 @@ export default function Dashboard() {
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <Link href="/expenses">
               <Button className="rounded-xl bg-indigo-600 px-6 py-6 text-base hover:bg-indigo-700">
-                <Plus className="mr-2 h-5 w-5" />
-                Add Expense
+                {/* <Plus className="mr-2 h-5 w-5" /> */}
+                View Expense
               </Button>
             </Link>
             <button
