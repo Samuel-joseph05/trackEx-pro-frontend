@@ -26,6 +26,7 @@ export default function useExpenses() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -36,6 +37,7 @@ export default function useExpenses() {
 
   const fetchExpenses = async () => {
     try {
+      setLoading(true);
       const data = await getExpenses(
         search,
         category,
@@ -47,6 +49,9 @@ export default function useExpenses() {
       setTotalPages(data.totalPages);
     } catch (err) {
       console.log(err);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -96,7 +101,7 @@ export default function useExpenses() {
     expenses,
     editingField,
     formData,
-
+   
     search,
     category,
     sort,
@@ -110,6 +115,8 @@ export default function useExpenses() {
 
     setPage,
 
+     setLoading,
+     
     setFormData,
     setEditingField,
 
