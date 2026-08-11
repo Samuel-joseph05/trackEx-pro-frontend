@@ -33,13 +33,13 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
 
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
+            {/* <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
 
               <Wallet className="h-6 w-6 text-white" />
 
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
 
               <h1 className="text-xl font-bold text-white">
                 Trackex
@@ -49,11 +49,11 @@ export default function Home() {
                 Smart Expense Tracker
               </p>
 
-            </div>
+            </div> */}
 
           </div>
 
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
 
             <Link href="/login">
 
@@ -74,7 +74,7 @@ export default function Home() {
 
             </Link>
 
-          </div>
+          </div> */}
 
         </div>
 
