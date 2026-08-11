@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/api/User";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+// import AuthSkeleton from "@/components/skeletons/AuthSkeleton";
 
 
 export default function LoginPage() {
@@ -74,8 +75,14 @@ export default function LoginPage() {
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
       console.log(error.response?.data || error.message);
+
+    }
+    finally{
+      setLoading(false)
     }
   };
+
+  
   // if(loading){
   //   return <AuthSkeleton />
   // }

@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getDashboard, getMonthlySummary } from "@/api/Expense";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 
 export default function Dashboard() {
@@ -38,6 +37,8 @@ export default function Dashboard() {
     month: `${item.month} ${item.year}`,
     total: item.total,
   }));
+
+  
   const cards = [
     {
       title: "Total Expenses",
@@ -71,17 +72,6 @@ export default function Dashboard() {
     router.replace("/login"); // Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
   };
 
-  //   const fetchMonthlySummary = async () => {
-  //   try {
-  //     const data = await getMonthlySummary();
-  //     console.log(data);
-
-  //     setMonthlySummary(data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   useEffect(() => {
     const load = async () => {
       try {
@@ -114,18 +104,6 @@ export default function Dashboard() {
     load();
   }, []);
 
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem("user");
-
-  //   if (storedUser) {
-  //     try {
-  //       setUser(JSON.parse(storedUser));
-  //     } catch (error) {
-  //       console.error("Invalid user data in localStorage:", error);
-  //       localStorage.removeItem("user");
-  //     }
-  //   }
-  // }, []);
 
   // Check if user is logged in, if not redirect to login page
   useEffect(() => {
@@ -148,7 +126,7 @@ export default function Dashboard() {
         <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white">Expense Dashboard</h1>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-white mt-5">
               Welcome, <span className="text-2xl text-yellow-200">{user?.name}</span> 👋
             </h1>
 
