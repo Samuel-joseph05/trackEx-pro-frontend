@@ -216,7 +216,7 @@ export default function Dashboard() {
                   formatter={(value) => [`₹${value}`, "Expense"]}
                 />
 
-                <Bar dataKey="total" fill="#6366f1" radius={[10, 10, 0, 0]} />
+                <Bar dataKey="total" fill="#6366f1" barSize={70} radius={[10, 10, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
