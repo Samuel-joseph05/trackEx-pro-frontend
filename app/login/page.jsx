@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/api/User";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 // import AuthSkeleton from "@/components/skeletons/AuthSkeleton";
 
@@ -19,6 +20,7 @@ export default function LoginPage() {
     phone: "",
     password: "",
   });
+  const searchParams = useSearchParams();
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -83,10 +85,12 @@ export default function LoginPage() {
   };
 
   
-  // if(loading){
-  //   return <AuthSkeleton />
-  // }
-
+   useEffect(() => {
+    if (searchParams.get("session") === "expired") {
+      toast.error("Your session has expired. Please log in again.");
+    }
+  }, [searchParams]);
+  
   return (
     <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10">
       <Card className="w-full max-w-md rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.35)]">
