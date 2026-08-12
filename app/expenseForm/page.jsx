@@ -108,7 +108,8 @@ export default function ExpenseForm() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center px-6 py-10">
+<main className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 ">
+  <div className="mx-auto max-w-6xl">
       <div className="mb-8 flex items-center">
         <Button
           variant="ghost"
@@ -119,7 +120,7 @@ export default function ExpenseForm() {
           Back
         </Button>
       </div>
-      <Card className="w-full max-w-xl rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.35)]">
+      <Card className="mx-auto w-full max-w-xl rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.35)]">
         <CardHeader className="space-y-3 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/20">
             <IndianRupee className="h-8 w-8 text-indigo-400" />
@@ -241,6 +242,7 @@ export default function ExpenseForm() {
           </form>
         </CardContent>
       </Card>
+      </div>
     </main>
   );
 }

@@ -11,7 +11,7 @@ const DashboardHeader = ({router}) => {
           {/* Heading */}
           <div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-              Expense Dashboard
+              Expenses 
             </h1>
 
             <p className="mt-2 text-sm sm:text-base text-slate-400">
