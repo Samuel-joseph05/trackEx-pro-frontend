@@ -63,7 +63,7 @@ return <Loading/>
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950  px-6"
+      className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950  px-6 py-6"
     >
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex items-center">
