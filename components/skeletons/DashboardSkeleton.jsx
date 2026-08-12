@@ -13,10 +13,6 @@ export default function DashboardSkeleton() {
             <Skeleton className="h-10 w-72 bg-slate-700" />
             <Skeleton className="mt-3 h-4 w-52 bg-slate-700" />
           </div>
-          <div className="flex gap-4">
-          <Skeleton className="h-12 w-35 rounded-xl bg-slate-700" />
-          <Skeleton className="h-12 w-35 rounded-xl bg-slate-700" />
-</div>
         </div>
 
         {/* Dashboard Cards */}
