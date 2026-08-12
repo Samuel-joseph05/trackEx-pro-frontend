@@ -134,21 +134,7 @@ export default function Dashboard() {
               Track your spending and manage your finances.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <Link href="/expenses">
-              <Button className="rounded-xl bg-indigo-600 px-6 py-6 text-base hover:bg-indigo-700">
-                {/* <Plus className="mr-2 h-5 w-5" /> */}
-                View Expense
-              </Button>
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 font-semibold text-white transition hover:bg-red-700"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
+        
         </div>
 
         {/* Dashboard Cards */}
