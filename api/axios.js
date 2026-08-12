@@ -67,3 +67,25 @@ return config;
 //     return Promise.reject(error);
 //   }
 // );
+API.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      const message = error.response?.data?.message;
+
+      if (
+        message === "Invalid or expired token" ||
+        message === "No Token provided"
+      ) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
