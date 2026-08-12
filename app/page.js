@@ -15,7 +15,7 @@ import {
 
 export default function Home() {
   return (
-  <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-sky-100 via-cyan-50 to-indigo-100">
+  <main className="">
 
       {/* Background */}
 
@@ -24,61 +24,6 @@ export default function Home() {
       <div className="absolute -top-44 left-0 h-96 w-96 rounded-full bg-blue-500/30 blur-[140px]" />
 
       <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-violet-500/30 blur-[160px]" />
-
-      {/* Navbar */}
-
-      <nav className="relative z-20">
-
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-
-          <div className="flex items-center gap-3">
-
-            {/* <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
-
-              <Wallet className="h-6 w-6 text-white" />
-
-            </div> */}
-
-            {/* <div>
-
-              <h1 className="text-xl font-bold text-white">
-                Trackex
-              </h1>
-
-              <p className="text-xs text-slate-400">
-                Smart Expense Tracker
-              </p>
-
-            </div> */}
-
-          </div>
-
-          {/* <div className="flex gap-3">
-
-            <Link href="/login">
-
-              <Button
-                variant="ghost"
-                className="text-white hover:bg-white/10"
-              >
-                Login
-              </Button>
-
-            </Link>
-
-            <Link href="/register">
-
-              <Button className="rounded-xl bg-blue-600 hover:bg-blue-700">
-                Register
-              </Button>
-
-            </Link>
-
-          </div> */}
-
-        </div>
-
-      </nav>
 
       {/* Hero */}
 
