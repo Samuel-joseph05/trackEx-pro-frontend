@@ -14,9 +14,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
         <Navbar />
 
-        <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-8">
-          {children}
-        </main>
+        {children}
 
         <Toaster
           position="top-right"
