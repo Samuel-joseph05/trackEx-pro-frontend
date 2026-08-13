@@ -1,29 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { useState } from "react";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/api/User";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+// import { useEffect } from "react";
+// import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+// import AuthSkeleton from "@/components/skeletons/AuthSkeleton";
 
-function LoginForm() {
+
+export default function LoginPage() {
   const [form, setForm] = useState({
     phone: "",
     password: "",
   });
+  // const searchParams = useSearchParams();
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const router = useRouter();
-  const searchParams = useSearchParams();
-
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -66,40 +68,39 @@ function LoginForm() {
 
       const data = await loginUser(form);
 
+      //save token to local storage
       localStorage.setItem("token", data.token);
+      // console.log(data);
+      // console.log(form);
       localStorage.setItem("user", JSON.stringify(data.user));
-
       router.push("/dashboard");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Login failed"
-      );
-
+      toast.error(error.response?.data?.message || "Login failed");
       console.log(error.response?.data || error.message);
-    } finally {
-      setLoading(false);
+
+    }
+    finally{
+      setLoading(false)
     }
   };
 
-  useEffect(() => {
-    if (searchParams.get("session") === "expired") {
-      toast.error("Your session has expired. Please log in again.");
-    }
-  }, [searchParams]);
-
+  
+  //  useEffect(() => {
+  //   if (searchParams.get("session") === "expired") {
+  //     toast.error("Your session has expired. Please log in again.");
+  //   }
+  // }, [searchParams]);
+  
   return (
     <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10">
       <Card className="w-full max-w-md rounded-3xl border border-slate-700 bg-white/10 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.35)]">
         <CardContent className="p-8">
-
           <div className="mb-8 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/20">
               <Lock className="h-8 w-8 text-indigo-400" />
             </div>
 
-            <h1 className="text-4xl font-bold text-white">
-              Welcome Back
-            </h1>
+            <h1 className="text-4xl font-bold text-white">Welcome Back</h1>
 
             <p className="mt-2 text-slate-400">
               Sign in to manage your expenses
@@ -107,13 +108,10 @@ function LoginForm() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
             {/* Phone */}
 
             <div className="space-y-2">
-              <Label className="text-slate-300">
-                Phone Number
-              </Label>
+              <Label className="text-slate-300">Phone Number</Label>
 
               <div className="relative">
                 <Phone
@@ -134,18 +132,14 @@ function LoginForm() {
               </div>
 
               {errors.phone && (
-                <p className="text-sm text-red-400">
-                  {errors.phone}
-                </p>
+                <p className="text-sm text-red-400">{errors.phone}</p>
               )}
             </div>
 
             {/* Password */}
 
             <div className="space-y-2">
-              <Label className="text-slate-300">
-                Password
-              </Label>
+              <Label className="text-slate-300">Password</Label>
 
               <div className="relative">
                 <Lock
@@ -167,18 +161,12 @@ function LoginForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-white"
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
 
               {errors.password && (
-                <p className="text-sm text-red-400">
-                  {errors.password}
-                </p>
+                <p className="text-sm text-red-400">{errors.password}</p>
               )}
             </div>
 
@@ -191,13 +179,10 @@ function LoginForm() {
             >
               {loading ? "Logging in..." : "Login"}
             </Button>
-
           </form>
 
           <div className="mt-8 border-t border-slate-700 pt-6 text-center">
-            <p className="text-slate-400">
-              Don&apos;t have an account?
-            </p>
+            <p className="text-slate-400">Don&apos;t have an account?</p>
 
             <Link
               href="/register"
@@ -206,25 +191,8 @@ function LoginForm() {
               Create Account
             </Link>
           </div>
-
         </CardContent>
       </Card>
     </main>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950">
-          <div className="text-white text-lg">
-            Loading...
-          </div>
-        </main>
-      }
-    >
-      <LoginForm />
-    </Suspense>
   );
 }
