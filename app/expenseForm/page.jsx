@@ -76,7 +76,7 @@ export default function ExpenseForm() {
     if (!validate()) return;
 
     console.log(form);
-
+    setLoading(true);
     try {
       const data = await createExpense(form);
       console.log(data);
