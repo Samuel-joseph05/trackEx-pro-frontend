@@ -73,9 +73,9 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    if (!validate()) return;
 
+    if (!validate()) return;
+    setLoading(true);
     try {
       const data = await createUser(form);
       console.log(data);
