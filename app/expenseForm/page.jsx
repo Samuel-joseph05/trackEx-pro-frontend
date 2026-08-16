@@ -74,8 +74,6 @@ export default function ExpenseForm() {
     e.preventDefault();
 
     if (!validate()) return;
-
-    console.log(form);
     setLoading(true);
     try {
       const data = await createExpense(form);
@@ -230,10 +228,10 @@ export default function ExpenseForm() {
 
               <div className="space-y-4">
                 <Button
-                  type="submit"
+                  type="submit" disabled={loading}
                   className="h-12 w-full rounded-xl bg-indigo-600 text-lg font-semibold transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95"
                 >
-                  Add Expense
+                  {loading ? "Adding Expense..." : "Add Expense"}
                 </Button>
 
                 <Link
