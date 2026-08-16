@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
+
 import {
   Wallet,
   Calendar,
   Receipt,
   Tag,
-  Plus,
   IndianRupee,
-  LogOut,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -66,12 +64,7 @@ export default function Dashboard() {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.replace("/login"); // Redirect to login page after logout use replace to prevent going back to the previous page(protected page) using the back button
-  };
-
+ 
   useEffect(() => {
     const load = async () => {
       try {
