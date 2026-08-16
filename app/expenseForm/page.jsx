@@ -18,7 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
-import ExpenseFormSkeleton from "@/components/skeletons/ExpenseFormSkeleton";
+// import ExpenseFormSkeleton from "@/components/skeletons/ExpenseFormSkeleton";
 
 export default function ExpenseForm() {
   const [form, setForm] = useState({
@@ -101,9 +101,9 @@ export default function ExpenseForm() {
     } //replace is used instead of push to prevent user from going back to the previous page using the back button
   }, [router]); // it will run only once when the component mounts, and it will not run again unless the router changes. This is useful for checking if the user is authenticated when they first visit the page.
 
-  if (loading) {
-    return <ExpenseFormSkeleton />;
-  }
+  // if (loading) {
+  //   return <ExpenseFormSkeleton />;
+  // }
 
   return (
     <main className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-7 py-6">
