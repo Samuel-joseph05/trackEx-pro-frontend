@@ -115,7 +115,7 @@ export default function useExpenses() {
 
     setPage,
 
-     setLoading,
+     isLoading:loading,
      
     setFormData,
     setEditingField,
