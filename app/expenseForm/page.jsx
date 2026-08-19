@@ -85,7 +85,6 @@ export default function ExpenseForm() {
         category: "",
         date: "",
       });
-      router.push("/expenses");
     } catch (error) {
       console.error(error);
       console.log(error.response?.data);
