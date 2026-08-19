@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "sonner";
+
 
 
 export const API=axios.create({
@@ -13,7 +13,6 @@ export const API=axios.create({
 API.interceptors.request.use(
     (config)=>{
 const token =localStorage.getItem("token");
-console.log("Token from localStorage:", token); // Debugging line
 
 if(token){
     config.headers.Authorization =`Bearer ${token}`;
