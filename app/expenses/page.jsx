@@ -14,6 +14,7 @@ import useExpenses from "./components/hooks/useExpenses";
 import Loading from "./loading";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import ExpenseGridSkeleton from "@/components/skeletons/ExpenseGridSkeleton";
 
 const Page = () => {
   const {
@@ -31,9 +32,10 @@ const Page = () => {
     setSearch,
     setCategory,
     setSort,
-
     setPage,
-    isLoading,
+
+    isInitialLoading,
+    isFetching,
 
     setFormData,
     setEditingField,
@@ -53,9 +55,8 @@ const Page = () => {
     }
   }, [router]);
 
-
-  if(isLoading){
-return <Loading/>
+  if (isInitialLoading) {
+    return <Loading />;
   }
 
   return (
@@ -67,17 +68,15 @@ return <Loading/>
     >
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex items-center">
-
-  <Button
-    variant="ghost"
-    onClick={() => router.push("/dashboard")}
-    className="gap-2 text-slate-300 hover:bg-white/10 hover:text-white"
-  >
-    <ArrowLeft className="h-5 w-5" />
-    Back
-  </Button>
-
-</div>
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/dashboard")}
+            className="gap-2 text-slate-300 hover:bg-white/10 hover:text-white"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Back
+          </Button>
+        </div>
         <DashboardHeader router={router} />
         <ExpenseFilters
           search={search}
@@ -88,29 +87,26 @@ return <Loading/>
           setSort={setSort}
         />
 
-        {expenses.length === 0 ? (
+        {isFetching ? (
+          <ExpenseGridSkeleton />
+        ) : expenses.length === 0 ? (
           <EmptyExpenses />
         ) : (
-         <>
-              <ExpenseGrid
-                expenses={expenses}
-                editingField={editingField}
-                formData={formData}
-                setFormData={setFormData}
-                handleChange={handleChange}
-                handleUpdate={handleUpdate}
-                setEditingField={setEditingField}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-              />
+          <>
+            <ExpenseGrid
+              expenses={expenses}
+              editingField={editingField}
+              formData={formData}
+              setFormData={setFormData}
+              handleChange={handleChange}
+              handleUpdate={handleUpdate}
+              setEditingField={setEditingField}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+            />
 
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                setPage={setPage}
-              />
-            </>
-          
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+          </>
         )}
       </div>
     </motion.div>
