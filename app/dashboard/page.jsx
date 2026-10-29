@@ -1,13 +1,6 @@
 "use client";
 
-
-import {
-  Wallet,
-  Calendar,
-  Receipt,
-  Tag,
-  IndianRupee,
-} from "lucide-react";
+import { Wallet, Calendar, Receipt, Tag, IndianRupee } from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -20,6 +13,8 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getSalary } from "@/api/Salary";
 import { getDashboard, getMonthlySummary } from "@/api/Expense";
 import { useRouter } from "next/navigation";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
@@ -28,6 +23,8 @@ export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [monthlySummary, setMonthlySummary] = useState([]);
+  const [salary, setSalary] = useState(null);
+  const [salaryError, setSalaryError] = useState("");
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -36,7 +33,6 @@ export default function Dashboard() {
     total: item.total,
   }));
 
-  
   const cards = [
     {
       title: "Total Expenses",
@@ -64,7 +60,6 @@ export default function Dashboard() {
     },
   ];
 
- 
   useEffect(() => {
     const load = async () => {
       try {
@@ -72,7 +67,20 @@ export default function Dashboard() {
         // await new Promise((resolve) => setTimeout(resolve, 3000)); //remove before production
 
         setDashboard(dashboard);
+        const now = new Date();
 
+        try {
+          const salaryResponse = await getSalary(
+            now.getMonth() + 1,
+            now.getFullYear(),
+          );
+
+          setSalary(salaryResponse.salary);
+          setSalaryError("");
+        } catch (error) {
+          console.error("Failed to load salary:", error);
+          setSalaryError("Unable to load salary.");
+        }
         const summary = await getMonthlySummary();
         setMonthlySummary(summary);
 
@@ -97,7 +105,6 @@ export default function Dashboard() {
     load();
   }, []);
 
-
   // Check if user is logged in, if not redirect to login page
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -120,14 +127,14 @@ export default function Dashboard() {
           <div>
             <h1 className="text-4xl font-bold text-white">Expense Dashboard</h1>
             <h1 className="text-3xl font-bold text-white mt-5">
-              Welcome, <span className="text-2xl text-yellow-200">{user?.name}</span> 👋
+              Welcome,{" "}
+              <span className="text-2xl text-yellow-200">{user?.name}</span> 👋
             </h1>
 
             <p className="mt-2 text-slate-400">
               Track your spending and manage your finances.
             </p>
           </div>
-        
         </div>
 
         {/* Dashboard Cards */}
@@ -160,6 +167,174 @@ export default function Dashboard() {
             );
           })}
         </div>
+
+{/* Monthly Salary Balance */}
+
+{(() => {
+  const monthlyExpenses = Number(
+    dashboard?.thisMonthExpenses ?? 0
+  );
+
+  const hasSalary =
+    salary?.amount !== undefined &&
+    salary?.amount !== null;
+
+  const monthlySalary = hasSalary
+    ? Number(salary.amount)
+    : 0;
+
+  const remaining = monthlySalary - monthlyExpenses;
+
+  const spentPercentage =
+    monthlySalary > 0
+      ? Math.round(
+          (monthlyExpenses / monthlySalary) * 100
+        )
+      : 0;
+
+  return (
+    <section className="mt-10 rounded-3xl border border-slate-700 bg-white/10 p-6 shadow-xl backdrop-blur-xl sm:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-slate-400">
+            {new Date().toLocaleString("en-IN", {
+              month: "long",
+              year: "numeric",
+            })}{" "}
+            Financial Overview
+          </p>
+
+          <h2 className="mt-2 text-2xl font-bold text-white">
+            Monthly Salary Balance
+          </h2>
+
+          <p className="mt-2 text-sm text-slate-400">
+            See how much of your monthly income remains
+            after expenses.
+          </p>
+        </div>
+
+        <Link
+          href="/salary"
+          className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white transition hover:bg-indigo-500"
+        >
+          Manage Salary
+        </Link>
+      </div>
+
+      {salaryError ? (
+        <p role="alert" className="mt-6 text-red-300">
+          {salaryError}
+        </p>
+      ) : !hasSalary ? (
+        <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-900/60 p-5">
+          <p className="text-slate-300">
+            No salary has been saved for this month yet.
+          </p>
+
+          <Link
+            href="/salary"
+            className="mt-3 inline-block font-semibold text-indigo-300 hover:text-indigo-200"
+          >
+            Add this month's salary →
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            <div className="rounded-2xl bg-slate-900/60 p-5">
+              <p className="text-sm text-slate-400">
+                Monthly Salary
+              </p>
+
+              <h3 className="mt-3 text-2xl font-bold text-white">
+                {monthlySalary.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 2,
+                })}
+              </h3>
+            </div>
+
+            <div className="rounded-2xl bg-slate-900/60 p-5">
+              <p className="text-sm text-slate-400">
+                Expenses This Month
+              </p>
+
+              <h3 className="mt-3 text-2xl font-bold text-orange-300">
+                {monthlyExpenses.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 2,
+                })}
+              </h3>
+            </div>
+
+            <div className="rounded-2xl bg-slate-900/60 p-5">
+              <p className="text-sm text-slate-400">
+                {remaining < 0
+                  ? "Amount Over Budget"
+                  : "Remaining Budget"}
+              </p>
+
+              <h3
+                className={`mt-3 text-2xl font-bold ${
+                  remaining < 0
+                    ? "text-red-400"
+                    : "text-emerald-400"
+                }`}
+              >
+                {Math.abs(remaining).toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 2,
+                })}
+              </h3>
+            </div>
+          </div>
+
+          <div className="mt-7">
+            <div className="mb-2 flex justify-between gap-3 text-sm">
+              <span className="text-slate-400">
+                Salary spent
+              </span>
+
+              <span className="font-semibold text-white">
+                {spentPercentage}%
+              </span>
+            </div>
+
+            <div
+              className="h-3 overflow-hidden rounded-full bg-slate-700"
+              role="progressbar"
+              aria-label="Percentage of monthly salary spent"
+              aria-valuenow={Math.min(spentPercentage, 100)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div
+                className={`h-full rounded-full transition-all ${
+                  spentPercentage > 100
+                    ? "bg-red-500"
+                    : "bg-emerald-500"
+                }`}
+                style={{
+                  width: `${Math.min(spentPercentage, 100)}%`,
+                }}
+              />
+            </div>
+
+            {spentPercentage > 100 && (
+              <p className="mt-2 text-sm text-red-300">
+                Your expenses have exceeded your monthly salary.
+              </p>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+})()}
 
         <div className="mt-10 rounded-3xl border border-slate-700 bg-white/10 p-8 shadow-[0_20px_50px_rgba(79,70,229,0.25)] backdrop-blur-xl">
           {/* Header */}
@@ -209,7 +384,12 @@ export default function Dashboard() {
                   formatter={(value) => [`₹${value}`, "Expense"]}
                 />
 
-                <Bar dataKey="total" fill="#6366f1" barSize={70} radius={[10, 10, 0, 0]} />
+                <Bar
+                  dataKey="total"
+                  fill="#6366f1"
+                  barSize={70}
+                  radius={[10, 10, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
