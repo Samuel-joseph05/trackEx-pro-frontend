@@ -129,12 +129,23 @@
   }
 }
 
+/* Remove focus outline and border from Recharts */
+.recharts-wrapper *,
+.recharts-wrapper *:focus,
+.recharts-wrapper *:focus-visible,
+.recharts-wrapper *:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove SVG bar focus stroke */
+.recharts-bar-rectangle,
 .recharts-bar-rectangle:focus,
 .recharts-bar-rectangle:focus-visible,
-.recharts-bar-rectangle:active,
+.recharts-rectangle,
 .recharts-rectangle:focus,
 .recharts-rectangle:focus-visible {
   outline: none !important;
-  stroke: none !important;
+  stroke: transparent !important;
   stroke-width: 0 !important;
 }
