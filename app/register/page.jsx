@@ -133,7 +133,7 @@ export default function RegisterPage() {
                   autoComplete="name"
                   value={form.name}
                   onChange={handleChange}
-                  placeholder="Samuel"
+                  placeholder="Your Name"
                   className="h-12 rounded-xl border-slate-700 bg-slate-900/70 pl-10 text-white placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
                 />
               </div>
@@ -159,7 +159,7 @@ export default function RegisterPage() {
                   autoComplete="email"
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="samuel@gmail.com"
+                  placeholder="youremail@gmail.com"
                   className="h-12 rounded-xl border-slate-700 bg-slate-900/70 pl-10 text-white placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
                 />
               </div>

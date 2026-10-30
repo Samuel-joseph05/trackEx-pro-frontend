@@ -236,7 +236,7 @@ export default function Dashboard() {
             href="/salary"
             className="mt-3 inline-block font-semibold text-indigo-300 hover:text-indigo-200"
           >
-            Add this month`&apos;`s salary →
+            Add this month&apos;s salary →
           </Link>
         </div>
       ) : (
@@ -353,7 +353,7 @@ export default function Dashboard() {
           {/* Chart */}
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
+              <BarChart data={chartData} >
                 <CartesianGrid stroke="#475569" strokeDasharray="4 4" />
 
                 <XAxis

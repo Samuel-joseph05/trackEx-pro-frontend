@@ -128,3 +128,13 @@
     @apply font-sans;
   }
 }
+
+.recharts-bar-rectangle:focus,
+.recharts-bar-rectangle:focus-visible,
+.recharts-bar-rectangle:active,
+.recharts-rectangle:focus,
+.recharts-rectangle:focus-visible {
+  outline: none !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
