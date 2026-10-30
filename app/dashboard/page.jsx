@@ -236,7 +236,7 @@ export default function Dashboard() {
             href="/salary"
             className="mt-3 inline-block font-semibold text-indigo-300 hover:text-indigo-200"
           >
-            Add this month's salary →
+            Add this month`&apos;`s salary →
           </Link>
         </div>
       ) : (
